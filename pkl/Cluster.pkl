@@ -1,0 +1,10 @@
+@go.Package { name = "github.com/mattsre/flyhouse/cluster" }
+module mattsre.flyhouse.Cluster
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.6.0#/go.pkl"
+
+/// The name of the Clickhouse Cluster to be deployed
+name: String
+
+/// Whether this cluster should have a public IPv4 address or not
+public: Boolean

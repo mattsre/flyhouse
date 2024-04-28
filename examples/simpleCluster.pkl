@@ -1,0 +1,4 @@
+amends "../pkl/Cluster.pkl"
+
+name = "SimpleCluster"
+public = false
