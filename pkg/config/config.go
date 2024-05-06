@@ -1,13 +1,14 @@
-package helpers
+package config
 
 import (
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
 
+	"github.com/mattsre/flyhouse/pkg/common"
+	"github.com/mattsre/flyhouse/pkg/log"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -42,7 +43,7 @@ func GetConfigPath() (string, error) {
 }
 
 func InitConfigDir(dir string) error {
-	if !DirectoryExists(dir) {
+	if !common.DirectoryExists(dir) {
 		if err := os.MkdirAll(dir, 0o700); err != nil {
 			return err
 		}
@@ -62,8 +63,7 @@ func LoadViperConfig() error {
 
 	err = viper.ReadInConfig()
 	if err == nil {
-		// TODO: change to debug log
-		fmt.Println("loaded flyhouse config file from", viper.ConfigFileUsed())
+		log.Println("loaded flyhouse config file from", viper.ConfigFileUsed())
 	}
 
 	if errors.Is(err, fs.ErrNotExist) {

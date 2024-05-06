@@ -2,12 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/mattsre/flyhouse/helpers"
+	"github.com/mattsre/flyhouse/pkg/config"
+	"github.com/mattsre/flyhouse/pkg/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	fly "github.com/superfly/fly-go"
 )
 
 var rootCmd = &cobra.Command{
@@ -19,21 +17,18 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	dir, err := helpers.GetConfigDirectory()
+	dir, err := config.GetConfigDirectory()
 	if err != nil {
-		fmt.Println("Error accessing home directory", err)
+		log.Error("Error accessing home directory", err)
 	}
 
-	if err = helpers.InitConfigDir(dir); err != nil {
-		fmt.Println(fmt.Sprintf("Error accessing config dir at %s", dir), err)
+	if err = config.InitConfigDir(dir); err != nil {
+		log.Error(fmt.Sprintf("Error accessing config dir at %s", dir), err)
 	}
 
-	helpers.LoadViperConfig()
-
-	fly.SetBaseURL(viper.GetString(helpers.ConfigFlyApiBase))
+	config.LoadViperConfig()
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }

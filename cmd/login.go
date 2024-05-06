@@ -3,11 +3,11 @@ package cmd
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
-	"github.com/mattsre/flyhouse/helpers"
+	"github.com/mattsre/flyhouse/pkg/config"
+	"github.com/mattsre/flyhouse/pkg/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	fly "github.com/superfly/fly-go"
@@ -22,27 +22,36 @@ var loginCmd = &cobra.Command{
 			panic(err)
 		}
 
+		fly.SetBaseURL(viper.GetString(config.ConfigFlyApiBase))
 		auth, err := fly.StartCLISessionWebAuth(hostname, false)
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("Copy the following URL into a browser to continue: %s\n", auth.URL)
+		log.Println("Copy the following URL into a browser to continue: ", auth.URL)
 
 		token, err := waitForCLISession(cmd.Context(), auth.ID)
 		switch {
 		case errors.Is(err, context.DeadlineExceeded):
-			fmt.Println("Login expired, please try again")
+			log.Error("Login expired, please try again")
 		case err != nil:
-			fmt.Println("Failed to login, please try again", err)
+			log.Error("Failed to login, please try again", err)
 		case token == "":
-			fmt.Println("Failed to login, please try again")
+			log.Error("Failed to login, please try again")
 		}
 
-		viper.Set(helpers.ConfigFlyAccessToken, token)
-		helpers.WriteViperConfig()
+		viper.Set(config.ConfigFlyAccessToken, token)
+		config.WriteViperConfig()
 
-		fmt.Println("Logged in successfully!")
+		user, err := fly.NewClientFromOptions(fly.ClientOptions{
+			AccessToken: token,
+		}).GetCurrentUser(context.TODO())
+
+		if err != nil {
+			log.Error("failed retrieving current user", err)
+		}
+
+		log.Println("Successfully logged in as ", user.Email)
 	},
 }
 
@@ -56,7 +65,7 @@ func waitForCLISession(parent context.Context, authId string) (token string, err
 
 	for ctx.Err() == nil {
 		if token, err = fly.GetAccessTokenForCLISession(ctx, authId); err != nil {
-			fmt.Printf("failed retrieving token: %v\n", err)
+			log.Errorf("failed retrieving token: %v\n", err)
 
 			time.Sleep(time.Second)
 

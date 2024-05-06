@@ -4,6 +4,8 @@ go 1.22.1
 
 require (
 	github.com/apple/pkl-go v0.6.0
+	github.com/lmittmann/tint v1.0.4
+	github.com/mattn/go-isatty v0.0.17
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/superfly/fly-go v0.1.7
