@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var deployCmd = &cobra.Command{
+var DeployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploy a Clickhouse cluster using the given configuration",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -16,8 +16,4 @@ var deployCmd = &cobra.Command{
 
 		client.CreateApp(cmd.Context(), "flyhouse-app")
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(deployCmd)
 }

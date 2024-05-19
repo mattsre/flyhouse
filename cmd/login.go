@@ -13,7 +13,7 @@ import (
 	fly "github.com/superfly/fly-go"
 )
 
-var loginCmd = &cobra.Command{
+var LoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login to your Fly.io account to grant API access",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,10 +53,6 @@ var loginCmd = &cobra.Command{
 
 		log.Println("Successfully logged in as ", user.Email)
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(loginCmd)
 }
 
 func waitForCLISession(parent context.Context, authId string) (token string, err error) {

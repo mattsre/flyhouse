@@ -10,7 +10,7 @@ import (
 	"github.com/mattn/go-isatty"
 )
 
-func init() {
+func InitializeLogger() {
 	slog.SetDefault(slog.New(
 		tint.NewHandler(os.Stderr, &tint.Options{
 			Level:      slog.LevelDebug,
